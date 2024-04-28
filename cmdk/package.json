@@ -28,7 +28,8 @@
   "dependencies": {
     "@radix-ui/react-dialog": "1.0.5",
     "@radix-ui/react-id": "^1.0.1",
-    "@radix-ui/react-primitive": "1.0.3"
+    "@radix-ui/react-primitive": "1.0.3",
+    "react-textarea-autosize": "^8.5.3"
   },
   "devDependencies": {
     "@types/react": "18.0.15"
