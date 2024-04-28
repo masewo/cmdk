@@ -1003,6 +1003,7 @@ export { Command as CommandRoot }
 export { List as CommandList }
 export { Item as CommandItem }
 export { Input as CommandInput }
+export { Textarea as CommandTextarea }
 export { Group as CommandGroup }
 export { Separator as CommandSeparator }
 export { Dialog as CommandDialog }
