@@ -82,7 +82,7 @@ type TextareaProps = Omit<React.ComponentPropsWithoutRef<typeof TextareaAutosize
   /**
    * Event handler called when the search value changes.
    */
-  onValueChange?: (search: string) => void
+  onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
 }
 type CommandProps = Children &
   DivProps & {
@@ -839,7 +839,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, forwardedRe
  * All props are forwarded to the underyling `textarea` element.
  */
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>((props, forwardedRef) => {
-  const { onValueChange, ...etc } = props
+  const { onChange, ...etc } = props
   const isControlled = props.value != null
   const store = useStore()
   const search = useCmdk((state) => state.search)
@@ -880,7 +880,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>((props, fo
               store.setState('search', e.target.value)
             }
 
-            onValueChange?.(e.target.value)
+            onChange?.(e)
           }}
       />
   )
