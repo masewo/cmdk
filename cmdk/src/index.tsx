@@ -3,6 +3,7 @@ import * as React from 'react'
 import { commandScore } from './command-score'
 import { Primitive } from '@radix-ui/react-primitive'
 import { useId } from '@radix-ui/react-id'
+import TextareaAutosize from "react-textarea-autosize";
 
 type Children = { children?: React.ReactNode }
 type DivProps = React.ComponentPropsWithoutRef<typeof Primitive.div>
@@ -64,6 +65,16 @@ type GroupProps = Children &
     forceMount?: boolean
   }
 type InputProps = Omit<React.ComponentPropsWithoutRef<typeof Primitive.input>, 'value' | 'onChange' | 'type'> & {
+  /**
+   * Optional controlled state for the value of the search input.
+   */
+  value?: string
+  /**
+   * Event handler called when the search value changes.
+   */
+  onValueChange?: (search: string) => void
+}
+type TextareaProps = Omit<React.ComponentPropsWithoutRef<typeof TextareaAutosize>, 'value' | 'onChange' | 'type'> & {
   /**
    * Optional controlled state for the value of the search input.
    */
@@ -820,6 +831,58 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, forwardedRe
         onValueChange?.(e.target.value)
       }}
     />
+  )
+})
+
+/**
+ * Command menu textarea.
+ * All props are forwarded to the underyling `textarea` element.
+ */
+const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>((props, forwardedRef) => {
+  const { onValueChange, ...etc } = props
+  const isControlled = props.value != null
+  const store = useStore()
+  const search = useCmdk((state) => state.search)
+  const value = useCmdk((state) => state.value)
+  const context = useCommand()
+
+  const selectedItemId = React.useMemo(() => {
+    const item = context.listInnerRef.current?.querySelector(
+        `${ITEM_SELECTOR}[${VALUE_ATTR}="${encodeURIComponent(value)}"]`,
+    )
+    return item?.getAttribute('id')
+  }, [])
+
+  React.useEffect(() => {
+    if (props.value != null) {
+      store.setState('search', props.value)
+    }
+  }, [props.value])
+
+  return (
+      <TextareaAutosize
+          ref={forwardedRef}
+          {...etc}
+          cmdk-input=""
+          autoComplete="off"
+          autoCorrect="off"
+          spellCheck={false}
+          aria-autocomplete="list"
+          role="combobox"
+          aria-expanded={true}
+          aria-controls={context.listId}
+          aria-labelledby={context.labelId}
+          aria-activedescendant={selectedItemId}
+          id={context.inputId}
+          value={isControlled ? props.value : search}
+          onChange={(e) => {
+            if (!isControlled) {
+              store.setState('search', e.target.value)
+            }
+
+            onValueChange?.(e.target.value)
+          }}
+      />
   )
 })
 
